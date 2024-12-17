@@ -11,6 +11,7 @@ const clickCountDisplay = document.getElementById("clickCount");
 const fuelStatus = document.getElementById("fuelStatus");
 const clickButton = document.getElementById("clickButton");
 const fuelUpgradeButton = document.getElementById("fuelUpgrade");
+const progressRocket = document.getElementById("progress-rocket");
 
 // Adatok betöltése Local Storage-ből
 function loadGame() {
@@ -117,6 +118,16 @@ function updateUI() {
     distanceDisplay.textContent = Math.floor(distance);
     clickCountDisplay.textContent = Math.floor(clickCount);
     fuelStatus.textContent = `Termelés: ${fuelRate} / másodperc`;
+
+    // Rakéta pozíciójának frissítése a távolság alapján
+    const progressPercentage = (100000 - distance) / 100000; // Haladás százalékban
+    progressRocket.style.bottom = `${progressPercentage * 100}%`;
+
+    if (distance <= 0) {
+        distance = 0;
+        alert("Gratulálok! Elérted a Holdat! 🚀");
+    }
+
     checkUpgrades();
 }
 
