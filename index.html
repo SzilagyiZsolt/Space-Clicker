@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Clicker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Mentés törlése gomb -->
+    <button id="resetButton" class="reset-button">Mentés törlése</button>
+
+    <div id="container">
+        <!-- Bal oldali rész - Állapot -->
+        <div id="status">
+            <h2 class="status">Távolság a Holdig</h2>
+            <p class="status"><span id="distance">100000</span> km</p>
+
+            <!-- Vizuális csík a haladásnak -->
+            <div id="progress-bar">
+                <img src="Image/Earth.png" alt="Earth" id="earth">
+                <div id="progress-rocket">
+                    <img src="Image/Rocket.png" alt="spaceship" class="mini-spaceship">
+                </div>
+                <img src="Image/Moon.png" alt="Moon" id="moon">
+            </div>
+        </div>
+
+        <!-- Középső rész - Játék -->
+        <div id="game">
+            <h1>Space Clicker</h1>
+            <div style="position: relative; display: inline-block;">
+                <button id="clickButton" class="click-button">
+                    <img src="Image/Rocket.png" alt="spaceship" class="spaceship">
+                </button>
+            </div>
+            <p>Nyersanyag: <span id="clickCount">0</span></p>
+            <div id="fuelStatus">Termelés: 0 / másodperc</div>
+        </div>
+
+        <!-- Jobb oldali rész - Fejlesztések -->
+        <div id="upgrades">
+            <h2 class="status">Fejlesztések</h2>
+            <button id="fuelUpgrade" disabled class="upgrade">Üzemanyag ár: 100 - Szint 0</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

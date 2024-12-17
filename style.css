@@ -1,0 +1,144 @@
+/* Alapbeállítások */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0b0f1a;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px;
+}
+
+/* Bal oldali rész */
+#status, #upgrades {
+    background-color: #1c2333;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+}
+
+#progress-bar {
+    position: relative;
+    width: 50px;
+    height: 400px;
+    background-color: #222;
+    border-radius: 10px;
+    margin: 20px auto;
+    overflow: hidden;
+    border: 2px solid #444;
+}
+
+#progress-rocket {
+    position: absolute;
+    bottom: 0; /* A földről indul */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    transition: bottom 0.5s ease-in-out;
+}
+
+.mini-spaceship {
+    width: 40px;
+}
+
+#earth, #moon {
+    position: absolute;
+    width: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#earth {
+    bottom: -10px; /* A csík alján helyezkedik el */
+}
+
+#moon {
+    top: -10px; /* A csík tetején helyezkedik el */
+}
+
+.status{
+    text-align: center;
+}
+
+.mini-spaceship {
+    width: 40px;
+}
+
+/* Középső játék rész */
+#game {
+    text-align: center;
+}
+
+.click-button {
+    background: none; /* Háttér eltávolítása */
+    border: none;     /* Szegély eltávolítása */
+    position: relative;
+    padding: 0;
+    cursor: pointer;
+}
+
+.spaceship {
+    width: 100px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+#fuelStatus {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #a3b8ff;
+}
+
+/* Fejlesztés gombok */
+.upgrade {
+    padding: 10px 20px;
+    margin: 10px 0;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.upgrade:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+/* Mentés törlés gomb */
+.reset-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.reset-button:hover {
+    background-color: #c82333;
+}
