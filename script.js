@@ -3,9 +3,11 @@ let clickCount = 0; // Nyersanyagok száma
 let fuelRate = 0; // Másodpercenkénti automatikus kattintás (üzemanyag)
 let fuelCost = 100; // Üzemanyag fejlesztés kezdő ára
 let fuelLevel = 0; // Üzemanyag fejlesztés szintje
+let isFuelRunning = false; // Állapotjelző az üzemanyaghoz
 let engineRate = 0; // Hajtómű automatikus kattintás
 let engineCost = 1000; // Hajtómű fejlesztés kezdő ára
 let engineLevel = 0; // Hajtómű fejlesztés szintje
+let isEngineRunning = false; // Állapotjelző a hajtóműhöz
 let distancePerClick = 1; // Kattintásonkénti csökkenés
 let totalRate = 0; // Összesített termelési érték
 
@@ -81,6 +83,8 @@ engineUpgradeButton.addEventListener("click", () => {
 
 // Automatikus kattintás üzemanyaghoz
 function startFuel() {
+    if (isFuelRunning) return; // Ha már fut, ne indítsuk el újra
+    isFuelRunning = true; // Beállítjuk, hogy mostantól fut
     setInterval(() => {
         if (distance > 0) {
             distance -= fuelRate;
@@ -93,6 +97,8 @@ function startFuel() {
 
 // Automatikus kattintás hajtóműhöz
 function startEngine() {
+    if (isEngineRunning) return; // Ha már fut, ne indítsuk el újra
+    isEngineRunning = true; // Beállítjuk, hogy mostantól fut
     setInterval(() => {
         if (distance > 0) {
             distance -= engineRate;
