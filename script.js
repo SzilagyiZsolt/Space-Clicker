@@ -51,7 +51,7 @@ function updateUI() {
 fuelUpgradeButton.addEventListener("click", () => {
     if (clickCount >= fuelCost) {
         clickCount -= fuelCost;
-        fuelRate++;
+        fuelRate += 0.5;
         fuelLevel++;
         fuelCost = Math.floor(fuelCost * 1.1);
         updateTotalProduction(); // Frissítjük a termelési értéket
@@ -67,7 +67,7 @@ fuelUpgradeButton.addEventListener("click", () => {
 engineUpgradeButton.addEventListener("click", () => {
     if (clickCount >= engineCost) {
         clickCount -= engineCost;
-        engineRate++;
+        engineRate += 5;
         engineLevel++;
         engineCost = Math.floor(engineCost * 1.2);
         updateTotalProduction(); // Frissítjük a termelési értéket
