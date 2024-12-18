@@ -1,19 +1,132 @@
-let distance = 100000; // Kezdő távolság (km)
-let clickCount = 0; // Kattintások száma
-let distancePerClick = 1; // Mennyivel csökkenti a távolságot egy kattintás
-let fuelRate = 0; // Automatikus kattintások száma másodpercenként
-let fuelCost = 100; // Fejlesztés ára
-let fuelInterval; // Időzítő az automatikus kattintásokhoz
-let fuelLevel = 0; // Az üzemanyag fejlesztés szintje
+let distance = 100000; // Kezdeti távolság a Holdig
+let clickCount = 0; // Nyersanyagok száma
+let fuelRate = 0; // Másodpercenkénti automatikus kattintás (üzemanyag)
+let fuelCost = 100; // Üzemanyag fejlesztés kezdő ára
+let fuelLevel = 0; // Üzemanyag fejlesztés szintje
+let engineRate = 0; // Hajtómű automatikus kattintás
+let engineCost = 1000; // Hajtómű fejlesztés kezdő ára
+let engineLevel = 0; // Hajtómű fejlesztés szintje
+let distancePerClick = 1; // Kattintásonkénti csökkenés
+let totalRate = 0; // Összesített termelési érték
 
-const distanceDisplay = document.getElementById("distance");
-const clickCountDisplay = document.getElementById("clickCount");
-const fuelStatus = document.getElementById("fuelStatus");
 const clickButton = document.getElementById("clickButton");
 const fuelUpgradeButton = document.getElementById("fuelUpgrade");
+const engineUpgradeButton = document.getElementById("engineUpgrade");
+const distanceDisplay = document.getElementById("distance");
+const clickCountDisplay = document.getElementById("clickCount");
+const totalRateDisplay = document.getElementById("totalProduction");
 const progressRocket = document.getElementById("progress-rocket");
 
-// Adatok betöltése Local Storage-ből
+// Kattintás esemény
+clickButton.addEventListener("click", () => {
+    if (distance > 0) {
+        distance -= distancePerClick;
+        clickCount++;
+        updateUI();
+        checkUpgrades();
+        updateTotalProduction(); // Frissítjük a termelést kattintás után
+        saveGame(); // Mentsük el minden kattintás után is
+    }
+});
+
+// Felület frissítése
+function updateUI() {
+    distanceDisplay.textContent = `${distance}`;
+    clickCountDisplay.textContent = `Nyersanyag: ${Math.floor(clickCount)}`; // Kerekítés
+
+    // Rakéta pozíciójának frissítése a távolság alapján
+    const progressPercentage = (100000 - distance) / 100000; // Haladás százalékban
+    progressRocket.style.bottom = `${progressPercentage * 100}%`;
+
+    if (distance <= 0) {
+        distance = 0;
+        alert("Gratulálok! Elérted a Holdat! 🚀");
+    }
+}
+
+// Üzemanyag fejlesztés
+fuelUpgradeButton.addEventListener("click", () => {
+    if (clickCount >= fuelCost) {
+        clickCount -= fuelCost;
+        fuelRate += 0.5;
+        fuelLevel++;
+        fuelCost = Math.floor(fuelCost * 1.1);
+        updateTotalProduction(); // Frissítjük a termelési értéket
+        updateUI();
+        checkUpgrades();
+        fuelUpgradeButton.textContent = `Üzemanyag fejlesztés ár: ${fuelCost} - Szint ${fuelLevel}`;
+        saveGame();
+        if (fuelRate === 1) startFuel();
+    }
+});
+
+// Hajtómű fejlesztés
+engineUpgradeButton.addEventListener("click", () => {
+    if (clickCount >= engineCost) {
+        clickCount -= engineCost;
+        engineRate += 5;
+        engineLevel++;
+        engineCost = Math.floor(engineCost * 1.2);
+        updateTotalProduction(); // Frissítjük a termelési értéket
+        updateUI();
+        checkUpgrades();
+        engineUpgradeButton.textContent = `Hajtómű fejlesztés ár: ${engineCost} - Szint ${engineLevel}`;
+        saveGame();
+        if (engineRate === 1) startEngine();
+    }
+});
+
+// Automatikus kattintás üzemanyaghoz
+function startFuel() {
+    setInterval(() => {
+        if (distance > 0) {
+            distance -= fuelRate;
+            clickCount += fuelRate; // A termelés hozzáadása a nyersanyaghoz
+            updateUI();
+        }
+    }, 1000);
+}
+
+// Automatikus kattintás hajtóműhöz
+function startEngine() {
+    setInterval(() => {
+        if (distance > 0) {
+            distance -= engineRate;
+            clickCount += engineRate; // A termelés hozzáadása a nyersanyaghoz
+            updateUI();
+        }
+    }, 1000);
+}
+
+// Összesített termelési érték frissítés
+function updateTotalProduction() {
+    totalRate = fuelRate + engineRate; // Üzemanyag és hajtómű termelés összege
+    totalRateDisplay.textContent = `Termelés: ${totalRate} / másodperc`; // Frissítjük a termelés értékét UI-ban
+}
+
+// Fejlesztések engedélyezése
+function checkUpgrades() {
+    fuelUpgradeButton.disabled = clickCount < fuelCost;
+    engineUpgradeButton.disabled = clickCount < engineCost;
+}
+
+// Játék állapot mentése
+function saveGame() {
+    const gameData = {
+        distance: distance,
+        clickCount: clickCount,
+        fuelRate: fuelRate,
+        fuelCost: fuelCost,
+        fuelLevel: fuelLevel,
+        engineRate: engineRate,
+        engineCost: engineCost,
+        engineLevel: engineLevel,
+        totalRate: totalRate
+    };
+    localStorage.setItem("spaceClickerSave", JSON.stringify(gameData));
+}
+
+// Játék állapot betöltése
 function loadGame() {
     const savedGame = JSON.parse(localStorage.getItem("spaceClickerSave"));
     if (savedGame) {
@@ -21,27 +134,24 @@ function loadGame() {
         clickCount = savedGame.clickCount || 0;
         fuelRate = savedGame.fuelRate || 0;
         fuelCost = savedGame.fuelCost || 100;
-        fuelLevel = savedGame.fuelLevel || 0; // Szint visszatöltése
+        fuelLevel = savedGame.fuelLevel || 0;
+        engineRate = savedGame.engineRate || 0;
+        engineCost = savedGame.engineCost || 1000;
+        engineLevel = savedGame.engineLevel || 0;
+        totalRate = savedGame.totalRate || 0;
 
-        updateUI(); // Felület frissítése
-        fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`; // Gomb szövegének frissítése
-        if (fuelRate > 0) startFuel(); // Ha van automata kattintás, újraindítjuk
+        updateUI();
+        updateTotalProduction(); // Betöltjük az összesített termelési értéket is
+
+        fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
+        engineUpgradeButton.textContent = `Hajtómű ár: ${engineCost} - Szint ${engineLevel}`;
+
+        if (fuelRate > 0) startFuel();
+        if (engineRate > 0) startEngine();
     }
 }
 
-// Adatok mentése Local Storage-be
-function saveGame() {
-    const gameData = {
-        distance: distance,
-        clickCount: clickCount,
-        fuelRate: fuelRate,
-        fuelCost: fuelCost,
-        fuelLevel: fuelLevel // Fejlesztés szintjének mentése
-    };
-    localStorage.setItem("spaceClickerSave", JSON.stringify(gameData));
-}
-
-// Mentés törlés gomb esemény
+// Mentés törlése gomb esemény
 const resetButton = document.getElementById("resetButton");
 
 resetButton.addEventListener("click", () => {
@@ -62,87 +172,19 @@ function resetGame() {
     fuelRate = 0;
     fuelCost = 100;
     fuelLevel = 0;
-
-    // Automatikus kattintások időzítőjének leállítása
-    if (fuelInterval) clearInterval(fuelInterval);
+    engineRate = 0;
+    engineCost = 1000;
+    engineLevel = 0;
 
     // UI frissítése
     updateUI();
+    updateTotalProduction();
     fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
-    fuelStatus.textContent = "Termelés: 0 / másodperc";
+    engineUpgradeButton.textContent = `Hajtómű ár: ${engineCost} - Szint ${engineLevel}`;
+    totalRateDisplay.textContent = "Termelés: 0 / másodperc";
 
     alert("A mentésed törölve lett. A játék újrakezdődött.");
 }
 
-// Kattintás esemény
-clickButton.addEventListener("click", () => {
-    handleClick();
-});
-
-// Fejlesztés vásárlása - Üzemanyag
-fuelUpgradeButton.addEventListener("click", () => {
-    if (clickCount >= fuelCost) {
-        clickCount -= fuelCost;
-        fuelCost += 5; // Növeljük a fejlesztés árát
-        fuelRate += 0.5; // Automatikus kattintások növelése
-        fuelLevel++;
-        startFuel();
-        updateUI();
-        checkUpgrades();
-        fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
-        saveGame();
-    }
-});
-
-// Automata kattintás indítása
-function startFuel() {
-    if (fuelInterval) clearInterval(fuelInterval);
-    fuelInterval = setInterval(() => {
-        handleClick(fuelRate);
-    }, 1000);
-    fuelStatus.textContent = `Termelés: ${fuelRate} / másodperc`;
-}
-
-// Kattintás kezelése
-function handleClick(multiplier = 1) {
-    clickCount += multiplier;
-    distance -= distancePerClick * multiplier;
-    if (distance < 0) distance = 0;
-    updateUI();
-    checkUpgrades();
-    saveGame(); // Mentjük az állást minden kattintásnál
-}
-
-// Felület frissítése
-function updateUI() {
-    distanceDisplay.textContent = Math.floor(distance);
-    clickCountDisplay.textContent = Math.floor(clickCount);
-    fuelStatus.textContent = `Termelés: ${fuelRate} / másodperc`;
-
-    // Rakéta pozíciójának frissítése a távolság alapján
-    const progressPercentage = (100000 - distance) / 100000; // Haladás százalékban
-    progressRocket.style.bottom = `${progressPercentage * 100}%`;
-
-    if (distance <= 0) {
-        distance = 0;
-        alert("Gratulálok! Elérted a Holdat! 🚀");
-    }
-
-    checkUpgrades();
-}
-
-// Fejlesztések aktiválása
-function checkUpgrades() {
-    fuelUpgradeButton.disabled = clickCount < fuelCost;
-}
-
-// Játék betöltése
-window.addEventListener("load", () => {
-    loadGame();
-    updateUI();
-});
-
-// Biztonsági mentés bezáráskor
-window.addEventListener("beforeunload", () => {
-    saveGame();
-});
+// Játék betöltése indításkor
+loadGame();
