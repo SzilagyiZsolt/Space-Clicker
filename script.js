@@ -61,7 +61,7 @@ fuelUpgradeButton.addEventListener("click", () => {
         checkUpgrades();
         fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
         saveGame();
-        if (fuelRate === 1) startFuel();
+        if (fuelRate === 0.5) startFuel();
     }
 });
 
@@ -77,7 +77,7 @@ engineUpgradeButton.addEventListener("click", () => {
         checkUpgrades();
         engineUpgradeButton.textContent = `Hajtómű ár: ${engineCost} - Szint ${engineLevel}`;
         saveGame();
-        if (engineRate === 1) startEngine();
+        if (engineRate === 5) startEngine();
     }
 });
 
