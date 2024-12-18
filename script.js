@@ -107,6 +107,7 @@ function startEngine() {
 function updateTotalProduction() {
     totalRate = fuelRate + engineRate; // Üzemanyag és hajtómű termelés összege
     totalRateDisplay.textContent = `Termelés: ${totalRate} / másodperc`; // Frissítjük a termelés értékét UI-ban
+    saveGame();
 }
 
 // Fejlesztések engedélyezése
