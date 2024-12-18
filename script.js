@@ -148,8 +148,8 @@ function loadGame() {
         updateUI();
         updateTotalProduction(); // Betöltjük az összesített termelési értéket is
 
-        fuelUpgradeButton.textContent = `Üzemanyag fejlesztés ár: ${fuelCost} - Szint ${fuelLevel}`;
-        engineUpgradeButton.textContent = `Hajtómű fejlesztés ár: ${engineCost} - Szint ${engineLevel}`;
+        fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
+        engineUpgradeButton.textContent = `Hajtómű ár: ${engineCost} - Szint ${engineLevel}`;
 
         if (fuelRate > 0) startFuel();
         if (engineRate > 0) startEngine();
