@@ -42,13 +42,16 @@ function updateUI() {
         distance = 0;
         alert("Gratulálok! Elérted a Holdat! 🚀");
     }
+
+    // Frissítjük a fejlesztési gombokat
+    checkUpgrades();
 }
 
 // Üzemanyag fejlesztés
 fuelUpgradeButton.addEventListener("click", () => {
     if (clickCount >= fuelCost) {
         clickCount -= fuelCost;
-        fuelRate += 0.5;
+        fuelRate++;
         fuelLevel++;
         fuelCost = Math.floor(fuelCost * 1.1);
         updateTotalProduction(); // Frissítjük a termelési értéket
@@ -64,7 +67,7 @@ fuelUpgradeButton.addEventListener("click", () => {
 engineUpgradeButton.addEventListener("click", () => {
     if (clickCount >= engineCost) {
         clickCount -= engineCost;
-        engineRate += 5;
+        engineRate++;
         engineLevel++;
         engineCost = Math.floor(engineCost * 1.2);
         updateTotalProduction(); // Frissítjük a termelési értéket
@@ -83,6 +86,7 @@ function startFuel() {
             distance -= fuelRate;
             clickCount += fuelRate; // A termelés hozzáadása a nyersanyaghoz
             updateUI();
+            saveGame();
         }
     }, 1000);
 }
@@ -94,6 +98,7 @@ function startEngine() {
             distance -= engineRate;
             clickCount += engineRate; // A termelés hozzáadása a nyersanyaghoz
             updateUI();
+            saveGame();
         }
     }, 1000);
 }
@@ -143,8 +148,8 @@ function loadGame() {
         updateUI();
         updateTotalProduction(); // Betöltjük az összesített termelési értéket is
 
-        fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
-        engineUpgradeButton.textContent = `Hajtómű ár: ${engineCost} - Szint ${engineLevel}`;
+        fuelUpgradeButton.textContent = `Üzemanyag fejlesztés ár: ${fuelCost} - Szint ${fuelLevel}`;
+        engineUpgradeButton.textContent = `Hajtómű fejlesztés ár: ${engineCost} - Szint ${engineLevel}`;
 
         if (fuelRate > 0) startFuel();
         if (engineRate > 0) startEngine();
