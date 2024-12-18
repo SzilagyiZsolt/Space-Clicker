@@ -31,7 +31,7 @@ clickButton.addEventListener("click", () => {
 
 // Felület frissítése
 function updateUI() {
-    distanceDisplay.textContent = `${distance}`;
+    distanceDisplay.textContent = `${Math.floor(distance)}`;
     clickCountDisplay.textContent = `Nyersanyag: ${Math.floor(clickCount)}`; // Kerekítés
 
     // Rakéta pozíciójának frissítése a távolság alapján
