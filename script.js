@@ -61,7 +61,11 @@ fuelUpgradeButton.addEventListener("click", () => {
         checkUpgrades();
         fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
         saveGame();
-        if (fuelRate === 0.5) startFuel();
+
+        // Leállítjuk az előző termelést, ha van
+        isFuelRunning = false;
+
+        if (fuelRate > 0) startFuel();
     }
 });
 
@@ -77,7 +81,7 @@ engineUpgradeButton.addEventListener("click", () => {
         checkUpgrades();
         engineUpgradeButton.textContent = `Hajtómű ár: ${engineCost} - Szint ${engineLevel}`;
         saveGame();
-        if (engineRate === 5) startEngine();
+        if (engineRate > 0) startEngine(); // Ha már van termelés, indítsuk el
     }
 });
 
@@ -85,12 +89,21 @@ engineUpgradeButton.addEventListener("click", () => {
 function startFuel() {
     if (isFuelRunning) return; // Ha már fut, ne indítsuk el újra
     isFuelRunning = true; // Beállítjuk, hogy mostantól fut
+
+    const interval = 100; // 1 másodperc / 10 lépés = 100 ms
+    const steps = 10; // Hány lépésben történjen az összeadás
+    const increment = fuelRate / steps; // Egy lépésnyi termelési érték
+
     setInterval(() => {
         if (distance > 0) {
-            distance -= fuelRate;
-            clickCount += fuelRate; // A termelés hozzáadása a nyersanyaghoz
-            updateUI();
-            saveGame();
+            for (let i = 0; i < steps; i++) {
+                setTimeout(() => {
+                    distance -= increment;
+                    clickCount += increment; // Fokozatos hozzáadás
+                    updateUI();
+                    saveGame();
+                }, i * interval); // Az időintervallum lépésenként nő
+            }
         }
     }, 1000);
 }
@@ -99,12 +112,21 @@ function startFuel() {
 function startEngine() {
     if (isEngineRunning) return; // Ha már fut, ne indítsuk el újra
     isEngineRunning = true; // Beállítjuk, hogy mostantól fut
+
+    const interval = 100; // 1 másodperc / 10 lépés = 100 ms
+    const steps = 10; // Hány lépésben történjen az összeadás
+    const increment = engineRate / steps; // Egy lépésnyi termelési érték
+
     setInterval(() => {
         if (distance > 0) {
-            distance -= engineRate;
-            clickCount += engineRate; // A termelés hozzáadása a nyersanyaghoz
-            updateUI();
-            saveGame();
+            for (let i = 0; i < steps; i++) {
+                setTimeout(() => {
+                    distance -= increment;
+                    clickCount += increment; // Fokozatos hozzáadás
+                    updateUI();
+                    saveGame();
+                }, i * interval); // Az időintervallum lépésenként nő
+            }
         }
     }, 1000);
 }
@@ -187,6 +209,16 @@ function resetGame() {
     engineRate = 0;
     engineCost = 1000;
     engineLevel = 0;
+
+    // Időzítők leállítása
+    isFuelRunning = false;
+    isEngineRunning = false;
+
+    // Az összes `setInterval` leállítása
+    const highestIntervalId = setInterval(() => {}, 0); // Legmagasabb azonosító
+    for (let i = 0; i <= highestIntervalId; i++) {
+        clearInterval(i);
+    }
 
     // UI frissítése
     updateUI();
