@@ -18,11 +18,12 @@
 
             <!-- Vizuális csík a haladásnak -->
             <div id="progress-bar">
-                <img src="Image/Earth.png" alt="Earth" id="earth">
+                <img src="Image/Earth.png" alt="Earth" id="earth" draggable="false" class="planet">
                 <div id="progress-rocket">
-                    <img src="Image/Rocket.png" alt="spaceship" class="mini-spaceship">
+                    <img src="Image/Rocket.png" alt="spaceship" class="mini-spaceship" draggable="false">
+                    <div class="flame"></div>
                 </div>
-                <img src="Image/Moon.png" alt="Moon" id="moon">
+                <img src="Image/Moon.png" alt="Moon" id="moon" draggable="false" class="planet">
             </div>
         </div>
 
@@ -31,7 +32,7 @@
             <h1>Space Clicker</h1>
             <div style="position: relative; display: inline-block;">
                 <button id="clickButton" class="click-button">
-                    <img src="Image/Rocket.png" alt="spaceship" class="spaceship">
+                    <img src="Image/Rocket.png" alt="spaceship" class="spaceship" draggable="false">
                 </button>
             </div>
             <p><span id="clickCount">0</span></p>

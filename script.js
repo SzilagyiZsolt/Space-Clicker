@@ -18,6 +18,7 @@ const distanceDisplay = document.getElementById("distance");
 const clickCountDisplay = document.getElementById("clickCount");
 const totalRateDisplay = document.getElementById("totalProduction");
 const progressRocket = document.getElementById("progress-rocket");
+const flame = document.querySelector('.flame');
 
 // Kattintás esemény
 clickButton.addEventListener("click", () => {
@@ -37,8 +38,9 @@ function updateUI() {
     clickCountDisplay.textContent = `Nyersanyag: ${Math.floor(clickCount)}`; // Kerekítés
 
     // Rakéta pozíciójának frissítése a távolság alapján
-    const progressPercentage = (100000 - distance) / 100000; // Haladás százalékban
-    progressRocket.style.bottom = `${progressPercentage * 100}%`;
+    const progressPercentage = (100000 - distance) / 100000;
+    progressRocket.style.bottom = `${progressPercentage * 100}%`; // Rakéta mozgása
+    updateFlameVisibility(distance); // Lángcsóva állapota
 
     if (distance <= 0) {
         distance = 0;
@@ -48,6 +50,18 @@ function updateUI() {
     // Frissítjük a fejlesztési gombokat
     checkUpgrades();
 }
+
+function updateFlameVisibility(distance) {
+    if (distance > 0 && distance < 100000) {
+        flame.style.display = 'block'; // Lángcsóva látható
+    } else {
+        flame.style.display = 'none'; // Lángcsóva eltűnik
+    }
+}
+
+// Rakd be az `updateUI` funkcióba
+
+
 
 // Üzemanyag fejlesztés
 fuelUpgradeButton.addEventListener("click", () => {
