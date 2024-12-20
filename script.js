@@ -4,14 +4,18 @@ let fuelRate = 0; // Másodpercenkénti automatikus kattintás (üzemanyag)
 let fuelCost = 100; // Üzemanyag fejlesztés kezdő ára
 let fuelLevel = 0; // Üzemanyag fejlesztés szintje
 let isFuelRunning = false; // Állapotjelző az üzemanyaghoz
-let engineRate = 0; // Hajtómű automatikus kattintás
-let engineCost = 1000; // Hajtómű fejlesztés kezdő ára
-let engineLevel = 0; // Hajtómű fejlesztés szintje
-let isEngineRunning = false; // Állapotjelző a hajtóműhöz
-let heatresistantRate = 0; // Hajtómű automatikus kattintás
-let heatresistantCost = 5000; // Hajtómű fejlesztés kezdő ára
-let heatresistantLevel = 0; // Hajtómű fejlesztés szintje
-let isHeatResistantRunning = false; // Állapotjelző a hajtóműhöz
+let engineRate = 0; 
+let engineCost = 1000; 
+let engineLevel = 0;
+let isEngineRunning = false;
+let heatresistantRate = 0;
+let heatresistantCost = 2000;
+let heatresistantLevel = 0;
+let isHeatResistantRunning = false;
+let stabilizerwingsRate = 0;
+let stabilizerwingsCost = 5000;
+let stabilizerwingsLevel = 0;
+let isStabilizerWingsRunning = false;
 let distancePerClick = 1; // Kattintásonkénti csökkenés
 let totalRate = 0; // Összesített termelési érték
 
@@ -19,6 +23,7 @@ const clickButton = document.getElementById("clickButton");
 const fuelUpgradeButton = document.getElementById("fuelUpgrade");
 const engineUpgradeButton = document.getElementById("engineUpgrade");
 const heatresistantUpgradeButton = document.getElementById("heatresistantUpgrade");
+const stabilizerwingsUpgradeButton = document.getElementById("stabilizerwingsUpgrade");
 const distanceDisplay = document.getElementById("distance");
 const clickCountDisplay = document.getElementById("clickCount");
 const totalRateDisplay = document.getElementById("totalProduction");
@@ -116,7 +121,7 @@ engineUpgradeButton.addEventListener("click", () => {
 heatresistantUpgradeButton.addEventListener("click", () => {
     if (clickCount >= heatresistantCost) {
         clickCount -= heatresistantCost;
-        heatresistantRate += 25;
+        heatresistantRate += 10;
         heatresistantLevel++;
         heatresistantCost = Math.floor(heatresistantCost * 1.2);
         updateTotalProduction(); // Frissítjük a termelési értéket
@@ -126,7 +131,7 @@ heatresistantUpgradeButton.addEventListener("click", () => {
             <div class="upgrade-info">
                 <span class="price">Hűálló pajzs ár: ${heatresistantCost}</span>
                 <span class="level">Szint: ${heatresistantLevel}</span>
-                <p class="description">Termelési érték: 25 / másodperc</p>
+                <p class="description">Termelési érték: 10 / másodperc</p>
             </div>
         `;
         saveGame();
@@ -135,6 +140,32 @@ heatresistantUpgradeButton.addEventListener("click", () => {
         isHeatResistantRunning = false;
 
         if (heatresistantRate > 0) startHeatResistant();
+    }
+});
+
+// Stabilizátor szárnyak fejlesztés
+stabilizerwingsUpgradeButton.addEventListener("click", () => {
+    if (clickCount >= stabilizerwingsCost) {
+        clickCount -= stabilizerwingsCost;
+        stabilizerwingsRate += 25;
+        stabilizerwingsLevel++;
+        stabilizerwingsCost = Math.floor(stabilizerwingsCost * 1.2);
+        updateTotalProduction(); // Frissítjük a termelési értéket
+        updateUI();
+        checkUpgrades();
+        stabilizerwingsUpgradeButton.innerHTML = `
+            <div class="upgrade-info">
+                <span class="price">Stabilizátor szárny ár: ${stabilizerwingsCost}</span>
+                <span class="level">Szint: ${stabilizerwingsLevel}</span>
+                <p class="description">Termelési érték: 25 / másodperc</p>
+            </div>
+        `;
+        saveGame();
+
+        // Leállítjuk az előző termelést, ha van
+        isFuelRunning = false;
+
+        if (fuelRate > 0) startFuel();
     }
 });
 
@@ -207,9 +238,32 @@ function startHeatResistant() {
     }, 1000);
 }
 
+// Automatikus kattintás stabilizátor szárnyakhoz
+function startStabilizerwings() {
+    if (isStabilizerWingsRunning) return; // Ha már fut, ne indítsuk el újra
+    isStabilizerWingsRunning = true; // Beállítjuk, hogy mostantól fut
+
+    const interval = 10; // 1 másodperc / 10 lépés = 100 ms
+    const steps = 100; // Hány lépésben történjen az összeadás
+    const increment = stabilizerwingsRate / steps; // Egy lépésnyi termelési érték
+
+    setInterval(() => {
+        if (distance > 0) {
+            for (let i = 0; i < steps; i++) {
+                setTimeout(() => {
+                    distance -= increment;
+                    clickCount += increment; // Fokozatos hozzáadás
+                    updateUI();
+                    saveGame();
+                }, i * interval); // Az időintervallum lépésenként nő
+            }
+        }
+    }, 1000);
+}
+
 // Összesített termelési érték frissítés
 function updateTotalProduction() {
-    totalRate = fuelRate + engineRate + heatresistantRate; // Üzemanyag, hajtómű és hőálló pajzs termelés összege
+    totalRate = fuelRate + engineRate + heatresistantRate + stabilizerwingsRate; // Üzemanyag, hajtómű, hőálló pajzs és stabilizátor szárnyak termelés összege
     totalRateDisplay.textContent = `Termelés: ${totalRate} / másodperc`; // Frissítjük a termelés értékét UI-ban
     saveGame();
 }
@@ -219,6 +273,7 @@ function checkUpgrades() {
     fuelUpgradeButton.disabled = clickCount < fuelCost;
     engineUpgradeButton.disabled = clickCount < engineCost;
     heatresistantUpgradeButton.disabled = clickCount < heatresistantCost;
+    stabilizerwingsUpgradeButton.disabled = clickCount < stabilizerwingsCost;
 }
 
 // Játék állapot mentése
@@ -235,6 +290,9 @@ function saveGame() {
         heatresistantRate: heatresistantRate,
         heatresistantCost: heatresistantCost,
         heatresistantLevel: heatresistantLevel,
+        stabilizerwingsRate: stabilizerwingsRate,
+        stabilizerwingsCost: stabilizerwingsCost,
+        stabilizerwingsLevel: stabilizerwingsLevel,
         totalRate: totalRate
     };
     localStorage.setItem("spaceClickerSave", JSON.stringify(gameData));
@@ -253,8 +311,11 @@ function loadGame() {
         engineCost = savedGame.engineCost || 1000;
         engineLevel = savedGame.engineLevel || 0;
         heatresistantRate = savedGame.heatresistantRate || 0;
-        heatresistantCost = savedGame.heatresistantCost || 5000;
+        heatresistantCost = savedGame.heatresistantCost || 2000;
         heatresistantLevel = savedGame.heatresistantLevel || 0;
+        stabilizerwingsRate = savedGame.stabilizerwingsRate || 0;
+        stabilizerwingsCost = savedGame.stabilizerwingsCost || 5000;
+        stabilizerwingsLevel = savedGame.stabilizerwingsLevel || 0;
         totalRate = savedGame.totalRate || 0;
 
         updateUI();
@@ -278,6 +339,13 @@ function loadGame() {
             <div class="upgrade-info">
                 <span class="price">Hűálló pajzs ár: ${heatresistantCost}</span>
                 <span class="level">Szint: ${heatresistantLevel}</span>
+                <p class="description">Termelési érték: 10 / másodperc</p>
+            </div>
+        `;
+        stabilizerwingsUpgradeButton.innerHTML = `
+            <div class="upgrade-info">
+                <span class="price">Stabilizátor szárny ár: ${stabilizerwingsCost}</span>
+                <span class="level">Szint: ${stabilizerwingsLevel}</span>
                 <p class="description">Termelési érték: 25 / másodperc</p>
             </div>
         `;
@@ -285,6 +353,7 @@ function loadGame() {
         if (fuelRate > 0) startFuel();
         if (engineRate > 0) startEngine();
         if (heatresistantRate > 0) startHeatResistant();
+        if (stabilizerwingsRate > 0) startStabilizerWings();
     }
 }
 
@@ -313,13 +382,17 @@ function resetGame() {
     engineCost = 1000;
     engineLevel = 0;
     heatresistantRate = 0;
-    heatresistantCost = 5000;
+    heatresistantCost = 2000;
     heatresistantLevel = 0;
+    stabilizerwingsRate = 0;
+    stabilizerwingsCost = 5000;
+    stabilizerwingsLevel = 0;
 
     // Időzítők leállítása
     isFuelRunning = false;
     isEngineRunning = false;
     isHeatResistantRunning = false;
+    isStabilizerWingsRunning = false;
 
     // Az összes `setInterval` leállítása
     const highestIntervalId = setInterval(() => {}, 0); // Legmagasabb azonosító
@@ -348,6 +421,13 @@ function resetGame() {
         <div class="upgrade-info">
             <span class="price">Hűálló pajzs ár: ${heatresistantCost}</span>
             <span class="level">Szint: ${heatresistantLevel}</span>
+            <p class="description">Termelési érték: 10 / másodperc</p>
+        </div>
+    `;
+    stabilizerwingsUpgradeButton.innerHTML = `
+        <div class="upgrade-info">
+            <span class="price">Stabilizátor szárny ár: ${stabilizerwingsCost}</span>
+            <span class="level">Szint: ${stabilizerwingsLevel}</span>
             <p class="description">Termelési érték: 25 / másodperc</p>
         </div>
     `;
