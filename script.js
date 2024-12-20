@@ -74,7 +74,13 @@ fuelUpgradeButton.addEventListener("click", () => {
         updateTotalProduction(); // Frissítjük a termelési értéket
         updateUI();
         checkUpgrades();
-        fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
+        fuelUpgradeButton.innerHTML = `
+            <div class="upgrade-info">
+                <span class="price">Üzemanyag ár: ${fuelCost}</span>
+                <span class="level">Szint: ${fuelLevel}</span>
+                <p class="description">Termelési érték: 0.5 / másodperc</p>
+            </div>
+        `;
         saveGame();
 
         // Leállítjuk az előző termelést, ha van
@@ -94,7 +100,13 @@ engineUpgradeButton.addEventListener("click", () => {
         updateTotalProduction(); // Frissítjük a termelési értéket
         updateUI();
         checkUpgrades();
-        engineUpgradeButton.textContent = `Hajtómű ár: ${engineCost} - Szint ${engineLevel}`;
+        engineUpgradeButton.innerHTML = `
+            <div class="upgrade-info">
+                <span class="price">Hajtómű ár: ${engineCost}</span>
+                <span class="level">Szint: ${engineLevel}</span>
+                <p class="description">Termelési érték: 5 / másodperc</p>
+            </div>
+        `;
         saveGame();
         if (engineRate > 0) startEngine(); // Ha már van termelés, indítsuk el
     }
@@ -110,7 +122,13 @@ heatresistantUpgradeButton.addEventListener("click", () => {
         updateTotalProduction(); // Frissítjük a termelési értéket
         updateUI();
         checkUpgrades();
-        heatresistantUpgradeButton.textContent = `Hőálló pajzs ár: ${heatresistantCost} - Szint ${heatresistantLevel}`;
+        heatresistantUpgradeButton.innerHTML = `
+            <div class="upgrade-info">
+                <span class="price">Hűálló pajzs ár: ${heatresistantCost}</span>
+                <span class="level">Szint: ${heatresistantLevel}</span>
+                <p class="description">Termelési érték: 25 / másodperc</p>
+            </div>
+        `;
         saveGame();
 
         // Leállítjuk az előző termelést, ha van
@@ -242,9 +260,27 @@ function loadGame() {
         updateUI();
         updateTotalProduction(); // Betöltjük az összesített termelési értéket is
 
-        fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
-        engineUpgradeButton.textContent = `Hajtómű ár: ${engineCost} - Szint ${engineLevel}`;
-        heatresistantUpgradeButton.textContent = `Hőálló pajzs ár: ${heatresistantCost} - Szint ${heatresistantLevel}`;
+        fuelUpgradeButton.innerHTML = `
+            <div class="upgrade-info">
+                <span class="price">Üzemanyag ár: ${fuelCost}</span>
+                <span class="level">Szint: ${fuelLevel}</span>
+                <p class="description">Termelési érték: 0.5 / másodperc</p>
+            </div>
+        `;
+        engineUpgradeButton.innerHTML = `
+            <div class="upgrade-info">
+                <span class="price">Hajtómű ár: ${engineCost}</span>
+                <span class="level">Szint: ${engineLevel}</span>
+                <p class="description">Termelési érték: 5 / másodperc</p>
+            </div>
+        `;
+        heatresistantUpgradeButton.innerHTML = `
+            <div class="upgrade-info">
+                <span class="price">Hűálló pajzs ár: ${heatresistantCost}</span>
+                <span class="level">Szint: ${heatresistantLevel}</span>
+                <p class="description">Termelési érték: 25 / másodperc</p>
+            </div>
+        `;
 
         if (fuelRate > 0) startFuel();
         if (engineRate > 0) startEngine();
@@ -294,9 +330,27 @@ function resetGame() {
     // UI frissítése
     updateUI();
     updateTotalProduction();
-    fuelUpgradeButton.textContent = `Üzemanyag ár: ${fuelCost} - Szint ${fuelLevel}`;
-    engineUpgradeButton.textContent = `Hajtómű ár: ${engineCost} - Szint ${engineLevel}`;
-    heatresistantUpgradeButton.textContent = `Hőálló pajzs ár: ${heatresistantCost} - Szint ${heatresistantLevel}`;
+    fuelUpgradeButton.innerHTML = `
+        <div class="upgrade-info">
+            <span class="price">Üzemanyag ár: ${fuelCost}</span>
+            <span class="level">Szint: ${fuelLevel}</span>
+            <p class="description">Termelési érték: 0.5 / másodperc</p>
+        </div>
+    `;
+    engineUpgradeButton.innerHTML = `
+        <div class="upgrade-info">
+            <span class="price">Hajtómű ár: ${engineCost}</span>
+            <span class="level">Szint: ${engineLevel}</span>
+            <p class="description">Termelési érték: 5 / másodperc</p>
+        </div>
+    `;
+    heatresistantUpgradeButton.innerHTML = `
+        <div class="upgrade-info">
+            <span class="price">Hűálló pajzs ár: ${heatresistantCost}</span>
+            <span class="level">Szint: ${heatresistantLevel}</span>
+            <p class="description">Termelési érték: 25 / másodperc</p>
+        </div>
+    `;
     totalRateDisplay.textContent = "Termelés: 0 / másodperc";
 
     alert("A mentésed törölve lett. A játék újrakezdődött.");
